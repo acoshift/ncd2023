@@ -24,10 +24,10 @@ const (
 	d = 5 * time.Second
 
 	// number of users
-	n = 4400
+	n = 3900
 
 	// number of concurrent per user
-	conPerUser = 200
+	k = 200
 )
 
 func main() {
@@ -169,7 +169,7 @@ var (
 func newLoadWorkerStateless(ctx context.Context) {
 	userID := uuid.NewString()
 
-	for i := 0; i < conPerUser; i++ {
+	for i := 0; i < k; i++ {
 		go func() {
 			for {
 				select {
@@ -367,7 +367,7 @@ func addPointStateful(userID string, amount int64) error {
 func newLoadWorkerStateful(ctx context.Context) {
 	userID := uuid.NewString()
 
-	for i := 0; i < conPerUser; i++ {
+	for i := 0; i < k; i++ {
 		go func() {
 			for {
 				select {
