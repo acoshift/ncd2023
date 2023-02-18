@@ -1,0 +1,45 @@
+/*
+# control
+$ wrk -c100 -t10 http://localhost:8080/f0
+Running 10s test @ http://localhost:8080/f0
+  10 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     1.62ms  628.87us  10.48ms   78.44%
+    Req/Sec     6.18k     1.03k   20.36k    92.62%
+  616656 requests in 10.10s, 69.39MB read
+Requests/sec:  61056.79
+Transfer/sec:      6.87MB
+
+# no cache
+$ wrk -c100 -t10 http://localhost:8080/f1
+Running 10s test @ http://localhost:8080/f1
+  8 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     6.31ms    7.54ms 150.36ms   91.20%
+    Req/Sec     2.48k   302.84     3.18k    81.38%
+  197346 requests in 10.00s, 22.21MB read
+Requests/sec:  19724.90
+Transfer/sec:      2.22MB
+
+# singleflight
+$ wrk -c100 -t10 http://localhost:8080/f2
+Running 10s test @ http://localhost:8080/f2
+  8 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     2.07ms  688.26us  15.23ms   80.02%
+    Req/Sec     5.72k   509.33     8.06k    83.50%
+  455245 requests in 10.01s, 51.23MB read
+Requests/sec:  45498.89
+Transfer/sec:      5.12MB
+
+# cache
+$ wrk -c100 -t10 http://localhost:8080/f3
+Running 10s test @ http://localhost:8080/f3
+  8 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     1.83ms  607.57us  13.73ms   83.19%
+    Req/Sec     6.50k   549.96     9.20k    77.12%
+  517760 requests in 10.01s, 58.27MB read
+Requests/sec:  51747.75
+Transfer/sec:      5.82MB
+*/
