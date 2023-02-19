@@ -69,12 +69,12 @@ func main() {
 	ctx = pgctx.NewContext(ctx, db)
 
 	{
-		fmt.Println("Running stateless load test...")
+		fmt.Println("Running without batch load test...")
 
 		nctx, _ := context.WithTimeout(ctx, d)
 		start := time.Now()
 		for i := 0; i < n; i++ {
-			go newLoadWorkerStateless(nctx)
+			go newLoadWorkerWithoutBatch(nctx)
 		}
 		<-nctx.Done()
 		printBenchResult(start)
@@ -94,7 +94,7 @@ func main() {
 	errCnt = 0
 
 	{
-		fmt.Println("Running stateful load test...")
+		fmt.Println("Running batch load test...")
 
 		go startBgWorker(ctx)
 
@@ -102,7 +102,7 @@ func main() {
 
 		start := time.Now()
 		for i := 0; i < n; i++ {
-			go newLoadWorkerStateful(nctx)
+			go newLoadWorkerBatch(nctx)
 		}
 		<-nctx.Done()
 		printBenchResult(start)
@@ -166,7 +166,7 @@ var (
 	errCnt uint64
 )
 
-func newLoadWorkerStateless(ctx context.Context) {
+func newLoadWorkerWithoutBatch(ctx context.Context) {
 	userID := uuid.NewString()
 
 	for i := 0; i < k; i++ {
@@ -357,14 +357,14 @@ func startBgWorker(ctx context.Context) {
 	}
 }
 
-func addPointStateful(userID string, amount int64) error {
+func addPointBatch(userID string, amount int64) error {
 	done := make(chan callback, 1)
 	opChan <- op{userID: userID, amount: amount, done: done}
 	cb := <-done
 	return cb.err
 }
 
-func newLoadWorkerStateful(ctx context.Context) {
+func newLoadWorkerBatch(ctx context.Context) {
 	userID := uuid.NewString()
 
 	for i := 0; i < k; i++ {
@@ -376,7 +376,7 @@ func newLoadWorkerStateful(ctx context.Context) {
 				default:
 				}
 
-				err := addPointStateful(userID, rand.Int63n(100))
+				err := addPointBatch(userID, rand.Int63n(100))
 				if errors.Is(err, context.DeadlineExceeded) {
 					return
 				}
